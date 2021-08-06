@@ -1,6 +1,6 @@
 import datetime as dt
 
-FORM = '%d.%m.%Y'
+FORMAT = '%d.%m.%Y'
 
 
 class Record:
@@ -9,7 +9,7 @@ class Record:
         self.amount = amount
         self.comment = comment
         if date is not None:
-            self.date = dt.datetime.strptime(date, FORM).date()
+            self.date = dt.datetime.strptime(date, FORMAT).date()
         else:
             self.date = dt.date.today()
 
@@ -25,16 +25,18 @@ class Calculator(Record):
 
     def get_today_stats(self):
         stats = 0
+        today = dt.date.today()
+        """Надеюсь тут правильно понял."""
         for record in self.records:
-            if record.date == dt.date.today():
+            if record.date == today:
                 stats = stats + record.amount
         return stats
 
     def get_week_stats(self):
         today = dt.date.today()
         week_date = today - dt.timedelta(days=7)
-        return (sum(rec.amount for rec in self.records
-                if today >= rec.date >= week_date))
+        return sum(rec.amount for rec in self.records
+                   if today >= rec.date >= week_date)
 
     def com_remained(self):
         return self.limit - self.get_today_stats()
@@ -44,9 +46,11 @@ class CashCalculator(Calculator):
     RUB_RATE = 1
     USD_RATE = 72.80
     EURO_RATE = 86.50
-
     """Класс обработки информации по денежному калькулятору."""
     def get_today_cash_remained(self, currency):
+        cash_remained = self.com_remained()
+        if cash_remained == 0:
+            return 'Денег нет, держись'
         currencies = {'rub': ('руб', self.RUB_RATE),
                       'usd': ('USD', self.USD_RATE),
                       'eur': ('Euro', self.EURO_RATE)}
@@ -55,14 +59,15 @@ class CashCalculator(Calculator):
             return 'Неопознанная валюта'
         val = currency
         cash_remained_val = round(cash_remained / currencies[val][1], 2)
-        cash_remained_cred = abs(round(cash_remained / currencies[val][1], 2))
+        """Переменная cash_remained_cred, мне кажется, как раз используется
+        для взятия по модулю отрицательного числа.
+        """
+        cash_remained_cred = abs(cash_remained_val)
         currencies_val = currencies[val][0]
         if cash_remained_val > 0:
             return f'На сегодня осталось {cash_remained_val} {currencies_val}'
-        elif cash_remained_val < 0:
-            return (f'Денег нет, держись: твой долг - '
-                    f'{cash_remained_cred} {currencies_val}')
-        return 'Денег нет, держись'
+        return ('Денег нет, держись: твой долг - '
+                f'{cash_remained_cred} {currencies_val}')
 
 
 class CaloriesCalculator(Calculator):
@@ -73,12 +78,3 @@ class CaloriesCalculator(Calculator):
             return ('Сегодня можно съесть что-нибудь ещё, '
                     f'но с общей калорийностью не более {cal_rem} кКал')
         return 'Хватит есть!'
-
-
-cal_calculator = CaloriesCalculator(1000)
-cal_calculator.add_record(Record(amount=145, comment='кофе'))
-print(cal_calculator. get_calories_remained())
-cash_calculator = CashCalculator(400)
-cash_calculator.add_record(Record(amount=145, comment='кофе'))
-cash_calculator.add_record(Record(amount=300, comment='Серёге за обед'))
-print(cash_calculator.get_today_cash_remained('rub'))
