@@ -63,7 +63,7 @@ class CashCalculator(Calculator):
             return f'На сегодня осталось {cash_remained_val} {currencies_val}'
         cash_remained_cred = abs(cash_remained_val)
         return ('Денег нет, держись: твой долг - '
-               f'{cash_remained_cred} {currencies_val}')
+                f'{cash_remained_cred} {currencies_val}')
 
 
 class CaloriesCalculator(Calculator):
@@ -74,7 +74,3 @@ class CaloriesCalculator(Calculator):
             return ('Сегодня можно съесть что-нибудь ещё, '
                     f'но с общей калорийностью не более {cal_rem} кКал')
         return 'Хватит есть!'
-
-cash_calculator = CashCalculator(100)
-cash_calculator.add_record(Record(amount=145, comment='кофе'))
-print(cash_calculator.get_today_cash_remained('eur'))
