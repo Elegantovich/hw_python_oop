@@ -53,12 +53,11 @@ class CashCalculator(Calculator):
         currencies = {'rub': ('руб', self.RUB_RATE),
                       'usd': ('USD', self.USD_RATE),
                       'eur': ('Euro', self.EURO_RATE)}
-        cash_remained = self.com_remained()
         if currency not in currencies:
             return 'Неопознанная валюта'
-        val = currency
-        cash_remained_val = round(cash_remained / currencies[val][1], 2)
-        currencies_val = currencies[val][0]
+        currency
+        cash_remained_val = round(cash_remained / currencies[currency][1], 2)
+        currencies_val = currencies[currency][0]
         if cash_remained_val > 0:
             return f'На сегодня осталось {cash_remained_val} {currencies_val}'
         cash_remained_cred = abs(cash_remained_val)
