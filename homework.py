@@ -25,17 +25,16 @@ class Calculator(Record):
 
     def get_today_stats(self):
         stats = 0
-        today = dt.date.today()
+        self.today = dt.date.today()
         for record in self.records:
-            if record.date == today:
+            if record.date == self.today:
                 stats += record.amount
         return stats
 
     def get_week_stats(self):
-        today = dt.date.today()
-        week_date = today - dt.timedelta(days=7)
+        week_date = self.today - dt.timedelta(days=7)
         return sum(rec.amount for rec in self.records
-                   if today >= rec.date >= week_date)
+                   if self.today >= rec.date >= week_date)
 
     def com_remained(self):
         return self.limit - self.get_today_stats()
@@ -55,7 +54,6 @@ class CashCalculator(Calculator):
                       'eur': ('Euro', self.EURO_RATE)}
         if currency not in currencies:
             return 'Неопознанная валюта'
-        currency
         cash_remained_val = round(cash_remained / currencies[currency][1], 2)
         currencies_val = currencies[currency][0]
         if cash_remained_val > 0:
