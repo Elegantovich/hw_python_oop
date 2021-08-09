@@ -25,16 +25,17 @@ class Calculator(Record):
 
     def get_today_stats(self):
         stats = 0
-        self.today = dt.date.today()
+        today = dt.date.today()
         for record in self.records:
-            if record.date == self.today:
+            if record.date == today:
                 stats += record.amount
         return stats
 
     def get_week_stats(self):
-        week_date = self.today - dt.timedelta(days=7)
+        today = dt.date.today()
+        week_date = today - dt.timedelta(days=7)
         return sum(rec.amount for rec in self.records
-                   if self.today >= rec.date >= week_date)
+                   if today >= rec.date >= week_date)
 
     def com_remained(self):
         return self.limit - self.get_today_stats()
